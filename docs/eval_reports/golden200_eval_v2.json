@@ -1,0 +1,490 @@
+{
+  "name": "评测 v2（200 条 golden + 单 Agent vs 多 Agent 对比）",
+  "date": "2026-09-02",
+  "golden": {
+    "total": 200,
+    "correct": 198,
+    "accuracy": 0.99,
+    "per_intent": {
+      "order": {
+        "total": 35,
+        "correct": 35
+      },
+      "logistics": {
+        "total": 36,
+        "correct": 35
+      },
+      "refund": {
+        "total": 37,
+        "correct": 36
+      },
+      "escalate": {
+        "total": 30,
+        "correct": 30
+      },
+      "knowledge": {
+        "total": 30,
+        "correct": 30
+      },
+      "fallback": {
+        "total": 32,
+        "correct": 32
+      }
+    }
+  },
+  "comparison": {
+    "scenario_count": 18,
+    "summary": {
+      "single": {
+        "coverage_rate": 1.0,
+        "escalate_accuracy": 0.9444,
+        "tool_error_rate": 0.0,
+        "avg_steps": 0.72,
+        "total_seconds": 8.62,
+        "avg_seconds": 0.479
+      },
+      "multi": {
+        "coverage_rate": 1.0,
+        "escalate_accuracy": 0.9444,
+        "tool_error_rate": 0.0,
+        "avg_steps": 1.56,
+        "total_seconds": 12.21,
+        "avg_seconds": 0.679
+      }
+    },
+    "rows": [
+      {
+        "id": "s01",
+        "query": "我的订单到哪了",
+        "expected_intent": "logistics",
+        "expected_escalate": false,
+        "single": {
+          "reply": "订单 ORD-20260828001 的物流：顺丰速运（运单号 SF1234567890），当前 运输中。最新轨迹：2026-08-29 20:11 武汉转运中心 运输中。预计 2026-09-01 ",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.659
+        },
+        "multi": {
+          "reply": "订单 ORD-20260828001 的物流：顺丰速运（运单号 SF1234567890），当前 运输中。最新轨迹：2026-08-29 20:11 武汉转运中心 运输中。预计 2026-09-01 ",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.65
+        }
+      },
+      {
+        "id": "s02",
+        "query": "查一下订单多少钱",
+        "expected_intent": "order",
+        "expected_escalate": false,
+        "single": {
+          "reply": "您的订单 ORD-20260828001 当前状态：运输中；金额 ¥4999.0；商品：小米15 手机 256G。下单时间 2026-08-28 10:12:00。",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.658
+        },
+        "multi": {
+          "reply": "您的订单 ORD-20260828001 当前状态：运输中；金额 ¥4999.0；商品：小米15 手机 256G。下单时间 2026-08-28 10:12:00。",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.65
+        }
+      },
+      {
+        "id": "s03",
+        "query": "这个能退吗",
+        "expected_intent": "refund",
+        "expected_escalate": false,
+        "single": {
+          "reply": "订单 ORD-20260828001：订单运输中，不支持直接退货；可申请物流拦截，拦截成功后退款。退款类型：物流拦截后退款；运费：拦截不产生费用；退款原路返回，一般 1-3 个工作日到账；花呗/信用卡",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.666
+        },
+        "multi": {
+          "reply": "您的订单 ORD-20260828001 当前状态：运输中（金额 ¥4999.0，小米15 手机 256G）；物流：运输中，最新 2026-08-29 20:11 运输中；退款判定：订单运输中，不支持",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 4,
+          "tool_error": false,
+          "seconds": 1.402
+        }
+      },
+      {
+        "id": "s04",
+        "query": "商品破损能退吗",
+        "expected_intent": "refund",
+        "expected_escalate": false,
+        "single": {
+          "reply": "订单 ORD-20260828001：订单运输中，不支持直接退货；可申请物流拦截，拦截成功后退款。退款类型：物流拦截后退款；运费：拦截不产生费用；退款原路返回，一般 1-3 个工作日到账；花呗/信用卡",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.672
+        },
+        "multi": {
+          "reply": "您的订单 ORD-20260828001 当前状态：运输中（金额 ¥4999.0，小米15 手机 256G）；物流：运输中，最新 2026-08-29 20:11 运输中；退款判定：订单运输中，不支持",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 4,
+          "tool_error": false,
+          "seconds": 1.395
+        }
+      },
+      {
+        "id": "s05",
+        "query": "退货运费谁出",
+        "expected_intent": "refund",
+        "expected_escalate": false,
+        "single": {
+          "reply": "订单 ORD-20260828001：订单运输中，不支持直接退货；可申请物流拦截，拦截成功后退款。退款类型：物流拦截后退款；运费：拦截不产生费用；退款原路返回，一般 1-3 个工作日到账；花呗/信用卡",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.656
+        },
+        "multi": {
+          "reply": "您的订单 ORD-20260828001 当前状态：运输中（金额 ¥4999.0，小米15 手机 256G）；物流：运输中，最新 2026-08-29 20:11 运输中；退款判定：订单运输中，不支持",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 4,
+          "tool_error": false,
+          "seconds": 1.399
+        }
+      },
+      {
+        "id": "s06",
+        "query": "发票怎么开",
+        "expected_intent": "knowledge",
+        "expected_escalate": false,
+        "single": {
+          "reply": "根据售后知识库：\n【发票开具】订单完成后可在订单详情申请电子发票，一般 24 小时内开具到邮箱。（出处：R-007）",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.668
+        },
+        "multi": {
+          "reply": "根据售后知识库：\n【发票开具】订单完成后可在订单详情申请电子发票，一般 24 小时内开具到邮箱。（出处：R-007）",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.654
+        }
+      },
+      {
+        "id": "s07",
+        "query": "包邮吗",
+        "expected_intent": "knowledge",
+        "expected_escalate": false,
+        "single": {
+          "reply": "根据售后知识库：\n【运费承担规则】七天无理由退货：买家承担运费（有运费险按保险赔付）；质量问题或发错货：卖家承担运费。（出处：R-003）",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.652
+        },
+        "multi": {
+          "reply": "根据售后知识库：\n【运费承担规则】七天无理由退货：买家承担运费（有运费险按保险赔付）；质量问题或发错货：卖家承担运费。（出处：R-003）",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.655
+        }
+      },
+      {
+        "id": "s08",
+        "query": "我要投诉",
+        "expected_intent": "escalate",
+        "expected_escalate": true,
+        "single": {
+          "reply": "好的，已为您转接人工客服，投诉工单会同步创建，24 小时内响应。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": true,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        },
+        "multi": {
+          "reply": "好的，已为您转接人工客服，投诉工单会同步创建，24 小时内响应。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": true,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        }
+      },
+      {
+        "id": "s09",
+        "query": "客服态度太差了",
+        "expected_intent": "escalate",
+        "expected_escalate": true,
+        "single": {
+          "reply": "好的，已为您转接人工客服，投诉工单会同步创建，24 小时内响应。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": true,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        },
+        "multi": {
+          "reply": "好的，已为您转接人工客服，投诉工单会同步创建，24 小时内响应。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": true,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        }
+      },
+      {
+        "id": "s10",
+        "query": "给我转人工",
+        "expected_intent": "escalate",
+        "expected_escalate": true,
+        "single": {
+          "reply": "好的，已为您转接人工客服，投诉工单会同步创建，24 小时内响应。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": true,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        },
+        "multi": {
+          "reply": "好的，已为您转接人工客服，投诉工单会同步创建，24 小时内响应。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": true,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        }
+      },
+      {
+        "id": "s11",
+        "query": "物流三天没动我要投诉",
+        "expected_intent": "escalate",
+        "expected_escalate": true,
+        "single": {
+          "reply": "好的，已为您转接人工客服，投诉工单会同步创建，24 小时内响应。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": true,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        },
+        "multi": {
+          "reply": "好的，已为您转接人工客服，投诉工单会同步创建，24 小时内响应。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": true,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        }
+      },
+      {
+        "id": "s12",
+        "query": "快递到哪了",
+        "expected_intent": "logistics",
+        "expected_escalate": false,
+        "single": {
+          "reply": "订单 ORD-20260828001 的物流：顺丰速运（运单号 SF1234567890），当前 运输中。最新轨迹：2026-08-29 20:11 武汉转运中心 运输中。预计 2026-09-01 ",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.654
+        },
+        "multi": {
+          "reply": "订单 ORD-20260828001 的物流：顺丰速运（运单号 SF1234567890），当前 运输中。最新轨迹：2026-08-29 20:11 武汉转运中心 运输中。预计 2026-09-01 ",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.66
+        }
+      },
+      {
+        "id": "s13",
+        "query": "订单 ORD-20260828001 多少钱",
+        "expected_intent": "order",
+        "expected_escalate": false,
+        "single": {
+          "reply": "您的订单 ORD-20260828001 当前状态：运输中；金额 ¥4999.0；商品：小米15 手机 256G。下单时间 2026-08-28 10:12:00。",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.658
+        },
+        "multi": {
+          "reply": "您的订单 ORD-20260828001 当前状态：运输中；金额 ¥4999.0；商品：小米15 手机 256G。下单时间 2026-08-28 10:12:00。",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.661
+        }
+      },
+      {
+        "id": "s14",
+        "query": "保修多久",
+        "expected_intent": "knowledge",
+        "expected_escalate": false,
+        "single": {
+          "reply": "知识库中没有匹配条目，建议转人工。",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.681
+        },
+        "multi": {
+          "reply": "知识库中没有匹配条目，建议转人工。",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.665
+        }
+      },
+      {
+        "id": "s15",
+        "query": "你好",
+        "expected_intent": "fallback",
+        "expected_escalate": false,
+        "single": {
+          "reply": "抱歉，我还没完全理解您的问题，已为您转接人工客服。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": false,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        },
+        "multi": {
+          "reply": "抱歉，我还没完全理解您的问题，已为您转接人工客服。",
+          "covered": true,
+          "escalate": true,
+          "escalate_ok": false,
+          "steps": 0,
+          "tool_error": false,
+          "seconds": 0.0
+        }
+      },
+      {
+        "id": "s16",
+        "query": "取消订单怎么退款",
+        "expected_intent": "refund",
+        "expected_escalate": false,
+        "single": {
+          "reply": "订单 ORD-20260828001：订单运输中，不支持直接退货；可申请物流拦截，拦截成功后退款。退款类型：物流拦截后退款；运费：拦截不产生费用；退款原路返回，一般 1-3 个工作日到账；花呗/信用卡",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.657
+        },
+        "multi": {
+          "reply": "您的订单 ORD-20260828001 当前状态：运输中（金额 ¥4999.0，小米15 手机 256G）；物流：运输中，最新 2026-08-29 20:11 运输中；退款判定：订单运输中，不支持",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 4,
+          "tool_error": false,
+          "seconds": 1.377
+        }
+      },
+      {
+        "id": "s17",
+        "query": "包裹签收了吗",
+        "expected_intent": "logistics",
+        "expected_escalate": false,
+        "single": {
+          "reply": "订单 ORD-20260828001 的物流：顺丰速运（运单号 SF1234567890），当前 运输中。最新轨迹：2026-08-29 20:11 武汉转运中心 运输中。预计 2026-09-01 ",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.669
+        },
+        "multi": {
+          "reply": "订单 ORD-20260828001 的物流：顺丰速运（运单号 SF1234567890），当前 运输中。最新轨迹：2026-08-29 20:11 武汉转运中心 运输中。预计 2026-09-01 ",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.664
+        }
+      },
+      {
+        "id": "s18",
+        "query": "我要退货",
+        "expected_intent": "refund",
+        "expected_escalate": false,
+        "single": {
+          "reply": "订单 ORD-20260828001：订单运输中，不支持直接退货；可申请物流拦截，拦截成功后退款。退款类型：物流拦截后退款；运费：拦截不产生费用；退款原路返回，一般 1-3 个工作日到账；花呗/信用卡",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 1,
+          "tool_error": false,
+          "seconds": 0.67
+        },
+        "multi": {
+          "reply": "您的订单 ORD-20260828001 当前状态：运输中（金额 ¥4999.0，小米15 手机 256G）；物流：运输中，最新 2026-08-29 20:11 运输中；退款判定：订单运输中，不支持",
+          "covered": true,
+          "escalate": false,
+          "escalate_ok": true,
+          "steps": 4,
+          "tool_error": false,
+          "seconds": 1.382
+        }
+      }
+    ]
+  }
+}

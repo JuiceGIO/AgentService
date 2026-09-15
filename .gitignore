@@ -1,0 +1,36 @@
+# 密钥与环境
+.env
+.env.local
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 日志
+logs/
+*.log
+
+# 构建产物
+target/
+dist/
+build/
+
+# 数据库与备份
+*.db
+*.sqlite3
+*.bak
+*.bak*
+backup/
+*backup*
+
+# 本地会话数据
+backend/data/
+
+# 编辑器 / 系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

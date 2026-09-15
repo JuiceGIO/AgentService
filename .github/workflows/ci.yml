@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python-gate:
+    name: Python 单元测试 + 评测 + 安全审计
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: 安装依赖
+        run: pip install -r backend/requirements.txt
+      - name: 单元测试（unittest）
+        run: python -m unittest discover -s tests -v
+      - name: golden 评测基线
+        run: python scripts/run_eval.py
+      - name: 安全审计
+        run: python scripts/security_audit.py
+
+  docker-build:
+    name: Java/Python 镜像可构建性
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: 构建 Java jar（CI 有网，可源码构建）
+        run: cd java-ticket-service && mvn -q -DskipTests package
+      - name: docker compose 构建
+        run: docker compose -f docker-compose.yml build

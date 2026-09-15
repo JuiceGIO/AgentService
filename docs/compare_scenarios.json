@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "name": "单 Agent vs 多 Agent 对比场景集",
+    "created": "2026-09-02",
+    "count": 18
+  },
+  "scenarios": [
+    {"id": "s01", "query": "我的订单到哪了", "intent": "logistics", "escalate": false, "expect_contains": ["物流"]},
+    {"id": "s02", "query": "查一下订单多少钱", "intent": "order", "escalate": false, "expect_contains": ["订单", "金额"]},
+    {"id": "s03", "query": "这个能退吗", "intent": "refund", "escalate": false, "expect_contains": ["退款", "运费"]},
+    {"id": "s04", "query": "商品破损能退吗", "intent": "refund", "escalate": false, "expect_contains": ["退款", "运费"]},
+    {"id": "s05", "query": "退货运费谁出", "intent": "refund", "escalate": false, "expect_contains": ["运费"]},
+    {"id": "s06", "query": "发票怎么开", "intent": "knowledge", "escalate": false, "expect_contains": ["发票", "知识库"]},
+    {"id": "s07", "query": "包邮吗", "intent": "knowledge", "escalate": false, "expect_contains": ["知识库"]},
+    {"id": "s08", "query": "我要投诉", "intent": "escalate", "escalate": true, "expect_contains": ["转接人工"]},
+    {"id": "s09", "query": "客服态度太差了", "intent": "escalate", "escalate": true, "expect_contains": ["转接人工"]},
+    {"id": "s10", "query": "给我转人工", "intent": "escalate", "escalate": true, "expect_contains": ["转接人工"]},
+    {"id": "s11", "query": "物流三天没动我要投诉", "intent": "escalate", "escalate": true, "expect_contains": ["转接人工"]},
+    {"id": "s12", "query": "快递到哪了", "intent": "logistics", "escalate": false, "expect_contains": ["物流", "轨迹"]},
+    {"id": "s13", "query": "订单 ORD-20260828001 多少钱", "intent": "order", "escalate": false, "expect_contains": ["订单", "金额"]},
+    {"id": "s14", "query": "保修多久", "intent": "knowledge", "escalate": false, "expect_contains": ["知识库", "保修"]},
+    {"id": "s15", "query": "你好", "intent": "fallback", "escalate": false, "expect_contains": ["理解"], "note": "问候应引导话术而非转人工（对比两架构差异）"},
+    {"id": "s16", "query": "取消订单怎么退款", "intent": "refund", "escalate": false, "expect_contains": ["退款"]},
+    {"id": "s17", "query": "包裹签收了吗", "intent": "logistics", "escalate": false, "expect_contains": ["物流"]},
+    {"id": "s18", "query": "我要退货", "intent": "refund", "escalate": false, "expect_contains": ["退款", "运费"]}
+  ]
+}

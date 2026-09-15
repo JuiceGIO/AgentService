@@ -1,0 +1,33 @@
+{
+  "name": "意图识别基线（规则引擎）",
+  "date": "2026-09-01",
+  "total": 55,
+  "correct": 53,
+  "accuracy": 0.9636,
+  "per_intent": {
+    "order": {
+      "total": 10,
+      "correct": 10
+    },
+    "logistics": {
+      "total": 11,
+      "correct": 10
+    },
+    "refund": {
+      "total": 12,
+      "correct": 11
+    },
+    "escalate": {
+      "total": 8,
+      "correct": 8
+    },
+    "knowledge": {
+      "total": 6,
+      "correct": 6
+    },
+    "fallback": {
+      "total": 8,
+      "correct": 8
+    }
+  }
+}

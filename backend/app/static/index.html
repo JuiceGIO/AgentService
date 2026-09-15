@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgentService · 电商售后智能客服 Demo v0</title>
+  <link rel="stylesheet" href="/static/style.css?v=0.7.0" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>对话</h2>
+        <div class="sidebar-actions">
+          <button id="replay-btn" class="new-btn">回放</button>
+          <button id="new-chat" class="new-btn">＋ 新建</button>
+        </div>
+      </div>
+      <ul id="session-list" class="session-list"></ul>
+    </aside>
+
+    <div class="main">
+      <header class="app-header">
+        <div class="header-row">
+          <h1>AgentService 智能客服</h1>
+          <span class="badge" id="conn-badge">连接中…</span>
+        </div>
+        <p class="subtitle">客服工作台 v0.7 · 对话 + 转人工 + 工单面板 + 会话回放</p>
+      </header>
+
+      <main class="chat" id="chat">
+        <div class="msg msg-agent">
+          <div class="bubble">您好，我是智能客服小助。现在可以问我：我的订单到哪了？这个能退吗？退货运费谁出？</div>
+        </div>
+      </main>
+
+      <div id="ticket-bar" class="ticket-bar hidden">
+        <span class="ticket-dot" id="ticket-dot"></span>
+        <span id="ticket-text">工单状态加载中…</span>
+      </div>
+
+      <footer class="input-bar">
+        <input id="input" type="text" placeholder="请输入您的问题，例如：我的订单到哪了？" autocomplete="off" />
+        <button id="human-btn" class="human-btn" title="转人工（自动创建工单）">转人工</button>
+        <button id="send">发送</button>
+      </footer>
+    </div>
+
+    <aside class="ticket-panel">
+      <div class="ticket-panel-head">
+        <h2>工单面板</h2>
+        <div class="ticket-panel-actions">
+          <button id="ticket-refresh" class="new-btn">刷新</button>
+        </div>
+      </div>
+      <div class="ticket-filters">
+        <button id="filter-session" class="filter-btn active">本会话</button>
+        <button id="filter-all" class="filter-btn">全部工单</button>
+      </div>
+      <div id="ticket-list" class="ticket-list"></div>
+      <div id="ticket-detail" class="ticket-detail hidden"></div>
+    </aside>
+  </div>
+  <div id="replay-overlay" class="replay-overlay hidden">
+    <div class="replay-panel">
+      <div class="replay-head">
+        <h3>会话回放（消息协议）</h3>
+        <button id="replay-close" class="session-del">×</button>
+      </div>
+      <div id="replay-body" class="replay-body"></div>
+    </div>
+  </div>
+  <script src="/static/chat.js?v=0.7.0"></script>
+</body>
+</html>

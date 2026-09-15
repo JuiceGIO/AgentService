@@ -1,0 +1,70 @@
+{
+  "date": "2026-09-02 21:39:37",
+  "results": [
+    {
+      "name": "golden_baseline",
+      "status": "pass",
+      "exit": 0,
+      "tail": [
+        "  物流查询: 35/36 = 97.2%",
+        "  退换货/退款: 36/37 = 97.3%",
+        "  投诉/转人工: 30/30 = 100.0%",
+        "  知识库查询: 30/30 = 100.0%",
+        "  其他: 32/32 = 100.0%",
+        "报告已落档：eval_reports\\golden200_rule_baseline.json"
+      ]
+    },
+    {
+      "name": "eval_v1_compare",
+      "status": "pass",
+      "exit": 0,
+      "tail": [
+        "",
+        "汇总：",
+        "  single  回答覆盖 100.0% | 转人工判定一致 94.4% | 工具错误率 0.0% | 平均步数 0.72 | 平均耗时 0.479s",
+        "  multi   回答覆盖 100.0% | 转人工判定一致 94.4% | 工具错误率 0.0% | 平均步数 1.56 | 平均耗时 0.679s",
+        "",
+        "报告已落档：eval_reports\\golden200_eval_v2.json"
+      ]
+    },
+    {
+      "name": "autoticket",
+      "status": "pass",
+      "exit": 0,
+      "tail": [
+        "[5] Java 不可用降级 OK: True",
+        "    回复: 好的，已为您转接人工客服，已记录您的诉求，24 小时内响应。（工单系统暂不可用，已为您记录，将尽快补建工单。）",
+        "",
+        "自动建单验收通过。",
+        "工单服务调用失败: [WinError 10061] 由于目标计算机积极拒绝，无法连接。",
+        "自动建单失败（转人工保留，稍后补建）: 工单服务不可达：[WinError 10061] 由于目标计算机积极拒绝，无法连接。"
+      ]
+    },
+    {
+      "name": "task_queue",
+      "status": "pass",
+      "exit": 0,
+      "tail": [
+        "[1] noop 生命周期 OK（succeeded / 100% / result={'steps': 5}）",
+        "[2] 批量异步建单 OK（3 张工单 #6,7,8，Java 可回查）",
+        "[3] 失败路径 OK（failed + error=count 需在 1-100）",
+        "[4] 失败隔离 OK（后续任务正常执行）",
+        "",
+        "异步任务队列验收通过。"
+      ]
+    },
+    {
+      "name": "delayed_queue",
+      "status": "pass",
+      "exit": 0,
+      "tail": [
+        "[1] 消息驱动 OK（延迟 1s → succeeded，result={'echo': 'day16-rt', 'steps': 2}）",
+        "[2] 定时兜底 OK（调度线程未启动，sweep_due_once 仍能投递执行）",
+        "[3] 业务延迟建单 OK（4s 后自动建工单 #9，Java 可查）",
+        "[4] 失败隔离 OK（坏任务 failed，后续任务正常）",
+        "",
+        "MQ 延迟队列验收通过。"
+      ]
+    }
+  ]
+}

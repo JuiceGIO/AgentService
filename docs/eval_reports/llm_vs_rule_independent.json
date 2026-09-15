@@ -1,0 +1,183 @@
+{
+  "name": "规则 vs LLM vs 混合路由 意图对比",
+  "date": "2026-09-03 12:56:43",
+  "dataset": "人工语义验证集 v1（40 条，独立于关键词标注）",
+  "total": 40,
+  "rule_accuracy": 0.75,
+  "llm_accuracy": 0.925,
+  "hybrid_accuracy": 0.975,
+  "hybrid_llm_calls": 17,
+  "hybrid_llm_trigger_rate": 0.425,
+  "per_intent": {
+    "order": {
+      "total": 7,
+      "rule": 5,
+      "llm": 7,
+      "hybrid": 7
+    },
+    "logistics": {
+      "total": 7,
+      "rule": 4,
+      "llm": 7,
+      "hybrid": 7
+    },
+    "refund": {
+      "total": 7,
+      "rule": 6,
+      "llm": 6,
+      "hybrid": 6
+    },
+    "escalate": {
+      "total": 6,
+      "rule": 6,
+      "llm": 5,
+      "hybrid": 6
+    },
+    "knowledge": {
+      "total": 7,
+      "rule": 3,
+      "llm": 6,
+      "hybrid": 7
+    },
+    "fallback": {
+      "total": 6,
+      "rule": 6,
+      "llm": 6,
+      "hybrid": 6
+    }
+  },
+  "diff_rows": [
+    {
+      "id": "I01",
+      "query": "我这单的实付金额是多少",
+      "expect": "order",
+      "rule": "fallback",
+      "rule_ok": false,
+      "llm": "order",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "order",
+      "hybrid_ok": true
+    },
+    {
+      "id": "I05",
+      "query": "这单用掉的优惠券有哪些",
+      "expect": "order",
+      "rule": "fallback",
+      "rule_ok": false,
+      "llm": "order",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "order",
+      "hybrid_ok": true
+    },
+    {
+      "id": "I08",
+      "query": "订单怎么还没到",
+      "expect": "logistics",
+      "rule": "order",
+      "rule_ok": false,
+      "llm": "logistics",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "logistics",
+      "hybrid_ok": true
+    },
+    {
+      "id": "I09",
+      "query": "预计什么时候配送",
+      "expect": "logistics",
+      "rule": "fallback",
+      "rule_ok": false,
+      "llm": "logistics",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "logistics",
+      "hybrid_ok": true
+    },
+    {
+      "id": "I14",
+      "query": "包裹现在在哪个城市",
+      "expect": "logistics",
+      "rule": "fallback",
+      "rule_ok": false,
+      "llm": "logistics",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "logistics",
+      "hybrid_ok": true
+    },
+    {
+      "id": "I15",
+      "query": "东西坏了能修吗",
+      "expect": "refund",
+      "rule": "fallback",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "knowledge",
+      "hybrid_ok": false
+    },
+    {
+      "id": "I25",
+      "query": "你们的客服电话是多少",
+      "expect": "escalate",
+      "rule": "escalate",
+      "rule_ok": true,
+      "llm": "fallback",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "escalate",
+      "hybrid_ok": true
+    },
+    {
+      "id": "I28",
+      "query": "退货规则是什么",
+      "expect": "knowledge",
+      "rule": "refund",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "knowledge",
+      "hybrid_ok": true
+    },
+    {
+      "id": "I29",
+      "query": "运费险怎么用",
+      "expect": "knowledge",
+      "rule": "refund",
+      "rule_ok": false,
+      "llm": "refund",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "knowledge",
+      "hybrid_ok": true
+    },
+    {
+      "id": "I30",
+      "query": "支持哪些支付方式",
+      "expect": "knowledge",
+      "rule": "fallback",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "knowledge",
+      "hybrid_ok": true
+    },
+    {
+      "id": "I34",
+      "query": "退换货政策在哪里看",
+      "expect": "knowledge",
+      "rule": "refund",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "knowledge",
+      "hybrid_ok": true
+    }
+  ]
+}

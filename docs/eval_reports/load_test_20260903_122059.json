@@ -1,0 +1,37 @@
+{
+  "name": "并发压测",
+  "date": "2026-09-03 12:20:59",
+  "note": "按本机实际结果如实记录；chat 类端点为防 MCP 子进程打爆，并发封顶 20",
+  "results": [
+    {
+      "name": "python_ping",
+      "url": "http://127.0.0.1:8015/ping",
+      "requests": 100,
+      "concurrency": 125,
+      "success": 100,
+      "failed": 0,
+      "error_samples": [],
+      "total_seconds": 0.165,
+      "rps": 605.2,
+      "avg_ms": 125.4,
+      "p50_ms": 115.6,
+      "p95_ms": 147.7,
+      "p99_ms": 148.0
+    },
+    {
+      "name": "java_tickets",
+      "url": "http://127.0.0.1:8080/tickets",
+      "requests": 100,
+      "concurrency": 125,
+      "success": 100,
+      "failed": 0,
+      "error_samples": [],
+      "total_seconds": 0.133,
+      "rps": 754.4,
+      "avg_ms": 117.0,
+      "p50_ms": 116.1,
+      "p95_ms": 125.4,
+      "p99_ms": 127.2
+    }
+  ]
+}

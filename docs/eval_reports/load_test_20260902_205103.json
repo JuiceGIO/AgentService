@@ -1,0 +1,43 @@
+{
+  "name": "并发压测",
+  "date": "2026-09-02 20:51:03",
+  "note": "按本机实际结果如实记录；chat 类端点为防 MCP 子进程打爆，并发封顶 20",
+  "results": [
+    {
+      "name": "python_ping",
+      "url": "http://127.0.0.1:8000/ping",
+      "requests": 500,
+      "concurrency": 500,
+      "success": 0,
+      "failed": 500,
+      "error_samples": [
+        "All connection attempts failed",
+        "All connection attempts failed",
+        "All connection attempts failed",
+        "All connection attempts failed",
+        "All connection attempts failed"
+      ],
+      "total_seconds": 13.858,
+      "rps": 0.0,
+      "avg_ms": 8756.6,
+      "p50_ms": 9221.9,
+      "p95_ms": 12527.9,
+      "p99_ms": 12605.1
+    },
+    {
+      "name": "java_tickets",
+      "url": "http://127.0.0.1:8080/tickets",
+      "requests": 500,
+      "concurrency": 500,
+      "success": 500,
+      "failed": 0,
+      "error_samples": [],
+      "total_seconds": 5.576,
+      "rps": 89.7,
+      "avg_ms": 4027.0,
+      "p50_ms": 4194.8,
+      "p95_ms": 4706.1,
+      "p99_ms": 4818.3
+    }
+  ]
+}

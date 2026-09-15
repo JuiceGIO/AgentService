@@ -1,0 +1,44 @@
+{
+  "name": "工程化门禁",
+  "date": "2026-09-03 12:12:40",
+  "require_java": false,
+  "java_up": false,
+  "stages": [
+    {
+      "name": "unit_tests",
+      "status": "pass",
+      "exit": 0,
+      "tail": [
+        "...",
+        "----------------------------------------------------------------------",
+        "Ran 34 tests in 0.770s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "name": "golden_baseline",
+      "status": "pass",
+      "exit": 0,
+      "tail": [
+        "  退换货/退款: 36/37 = 97.3%",
+        "  投诉/转人工: 30/30 = 100.0%",
+        "  知识库查询: 30/30 = 100.0%",
+        "  其他: 32/32 = 100.0%",
+        "报告已落档：eval_reports\\golden200_rule_baseline.json"
+      ]
+    },
+    {
+      "name": "security_audit",
+      "status": "pass",
+      "exit": 0,
+      "tail": [
+        "待人工复核 INFO：1 条",
+        "  ? backend/app/config.py:17: OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\", \"\")",
+        "报告已落档：security_audit_latest.json",
+        "",
+        "审计结论： 通过（含演示凭据等 INFO 需人工确认）"
+      ]
+    }
+  ]
+}

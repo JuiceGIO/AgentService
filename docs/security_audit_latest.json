@@ -1,0 +1,16 @@
+{
+  "name": "安全审计",
+  "date": "2026-09-03 12:12:37",
+  "tracked_files": 87,
+  "high_risk_secrets": [],
+  "sensitive_tracked": [],
+  "gitignore_coverage": {
+    ".env": true,
+    ".venv": true,
+    "logs": true,
+    "backend/data": true
+  },
+  "info_review": [
+    "backend/app/config.py:17: OPENAI_API_KEY = os.getenv(\"OPENAI_API_KEY\", \"\")"
+  ]
+}

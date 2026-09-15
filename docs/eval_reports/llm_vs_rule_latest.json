@@ -1,0 +1,219 @@
+{
+  "name": "规则 vs LLM vs 混合路由 意图对比",
+  "date": "2026-09-03 12:56:05",
+  "dataset": "意图识别 golden set v3（200 条，语义口径 v1）",
+  "total": 200,
+  "rule_accuracy": 0.96,
+  "llm_accuracy": 0.965,
+  "hybrid_accuracy": 0.99,
+  "hybrid_llm_calls": 46,
+  "hybrid_llm_trigger_rate": 0.23,
+  "per_intent": {
+    "order": {
+      "total": 33,
+      "rule": 33,
+      "llm": 30,
+      "hybrid": 32
+    },
+    "logistics": {
+      "total": 37,
+      "rule": 35,
+      "llm": 37,
+      "hybrid": 37
+    },
+    "refund": {
+      "total": 34,
+      "rule": 33,
+      "llm": 32,
+      "hybrid": 33
+    },
+    "knowledge": {
+      "total": 35,
+      "rule": 30,
+      "llm": 35,
+      "hybrid": 35
+    },
+    "escalate": {
+      "total": 30,
+      "rule": 30,
+      "llm": 28,
+      "hybrid": 30
+    },
+    "fallback": {
+      "total": 31,
+      "rule": 31,
+      "llm": 31,
+      "hybrid": 31
+    }
+  },
+  "diff_rows": [
+    {
+      "id": 5,
+      "query": "这个商品价格多少",
+      "expect": "order",
+      "rule": "order",
+      "rule_ok": true,
+      "llm": "fallback",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "order",
+      "hybrid_ok": true
+    },
+    {
+      "id": 31,
+      "query": "退货规则是什么",
+      "expect": "knowledge",
+      "rule": "refund",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "knowledge",
+      "hybrid_ok": true
+    },
+    {
+      "id": 38,
+      "query": "有没有客服电话",
+      "expect": "escalate",
+      "rule": "escalate",
+      "rule_ok": true,
+      "llm": "fallback",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "escalate",
+      "hybrid_ok": true
+    },
+    {
+      "id": 53,
+      "query": "订单怎么还没到",
+      "expect": "logistics",
+      "rule": "order",
+      "rule_ok": false,
+      "llm": "logistics",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "logistics",
+      "hybrid_ok": true
+    },
+    {
+      "id": 54,
+      "query": "东西坏了能修吗",
+      "expect": "refund",
+      "rule": "fallback",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "knowledge",
+      "hybrid_ok": false
+    },
+    {
+      "id": 85,
+      "query": "运费险怎么用",
+      "expect": "knowledge",
+      "rule": "refund",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "knowledge",
+      "hybrid_ok": true
+    },
+    {
+      "id": 115,
+      "query": "订单配送费是多少",
+      "expect": "order",
+      "rule": "order",
+      "rule_ok": true,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "knowledge",
+      "hybrid_ok": false
+    },
+    {
+      "id": 120,
+      "query": "订单能用哪些支付方式",
+      "expect": "knowledge",
+      "rule": "order",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "knowledge",
+      "hybrid_ok": true
+    },
+    {
+      "id": 122,
+      "query": "商品套装包含哪些东西",
+      "expect": "order",
+      "rule": "order",
+      "rule_ok": true,
+      "llm": "fallback",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "order",
+      "hybrid_ok": true
+    },
+    {
+      "id": 124,
+      "query": "订单预计什么时候配送",
+      "expect": "logistics",
+      "rule": "order",
+      "rule_ok": false,
+      "llm": "logistics",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "logistics",
+      "hybrid_ok": true
+    },
+    {
+      "id": 149,
+      "query": "七天无理由能退吗",
+      "expect": "refund",
+      "rule": "refund",
+      "rule_ok": true,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "refund",
+      "hybrid_ok": true
+    },
+    {
+      "id": 154,
+      "query": "退换货政策有什么变化",
+      "expect": "knowledge",
+      "rule": "refund",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "knowledge",
+      "hybrid_ok": true
+    },
+    {
+      "id": 161,
+      "query": "你们公司客服电话多少",
+      "expect": "escalate",
+      "rule": "escalate",
+      "rule_ok": true,
+      "llm": "fallback",
+      "llm_error": null,
+      "llm_ok": false,
+      "hybrid": "escalate",
+      "hybrid_ok": true
+    },
+    {
+      "id": 195,
+      "query": "支持微信支付吗",
+      "expect": "knowledge",
+      "rule": "fallback",
+      "rule_ok": false,
+      "llm": "knowledge",
+      "llm_error": null,
+      "llm_ok": true,
+      "hybrid": "knowledge",
+      "hybrid_ok": true
+    }
+  ]
+}
