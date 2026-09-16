@@ -1,0 +1,12 @@
+---
+description: 项目约束入口（分层约定、禁止事项、常用命令、必读文件）
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+本项目的唯一约束来源是仓库根目录的 `AGENTS.md`，动手前先读它。最容易犯的三条：
+
+1. 不绕过分层：Agent 层（`backend/app`）不直连数据库，业务工具一律走 `mcp_servers/`，Python 调 Java 只走 `backend/app/ticket_client.py`。
+2. 不动评测口径与测试：`docs/golden_set.json`、`docs/independent_golden.json`、`tests/` 与 `scripts/test_*.py` 不得随手改。
+3. 提交前跑本地门禁：`backend\.venv\Scripts\python.exe scripts\test_all.py`（单测 + 评测 + 安全审计）。
