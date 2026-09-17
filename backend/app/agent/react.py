@@ -5,6 +5,7 @@ import json
 import logging
 
 from .llm import OpenAIChatLLM, RuleLLM, SYSTEM_PROMPT, parse_action
+from .errors import PermissionDenied
 from .router import Router
 
 logger = logging.getLogger("app.agent.react")
@@ -33,9 +34,11 @@ class AgentResult:
 
 
 class ReActAgent:
-    def __init__(self, registry, max_steps: int = 5, use_llm: bool = True):
+    def __init__(self, registry, max_steps: int = 5, use_llm: bool = True, context_note: str = ""):
         self.registry = registry
         self.max_steps = max_steps
+        # 三层记忆的注入点：会话摘要 + 用户长期偏好（由 SessionStore 组装）
+        self.context_note = context_note or ""
         self.rule_llm = RuleLLM()
         # use_llm=False 供评测对比：强制规则引擎，保证结果可复现（不依赖 Key/网络）
         self.llm = OpenAIChatLLM() if (use_llm and OpenAIChatLLM.available()) else self.rule_llm
@@ -59,7 +62,10 @@ class ReActAgent:
                 confidence=confidence,
             )
 
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        system_content = SYSTEM_PROMPT
+        if self.context_note:
+            system_content = f"{SYSTEM_PROMPT}\n\n{self.context_note}"
+        messages = [{"role": "system", "content": system_content}]
         if history:
             messages.extend(history)
         messages.append({"role": "user", "content": user_text})
@@ -117,6 +123,9 @@ class ReActAgent:
             except asyncio.TimeoutError:
                 result = {"error": f"工具 {tool} 调用超时（>{TOOL_TIMEOUT}s）"}
                 logger.warning("工具超时: %s", tool)
+            except PermissionDenied:
+                # 越权必须向上冒泡成 403，不能被当成普通工具错误回喂给模型
+                raise
             except Exception as exc:
                 result = {"error": str(exc)}
                 logger.warning("工具调用错误: %s -> %s", tool, exc)
@@ -178,7 +187,13 @@ def _with_ticket_failed(reply: str) -> str:
     return reply
 
 
-def run_agent_sync(user_text: str, history: list = None, session_id: str = "") -> dict:
+def run_agent_sync(
+    user_text: str,
+    history: list = None,
+    session_id: str = "",
+    actor_id: str = "",
+    context_note: str = "",
+) -> dict:
     """同步入口：在独立事件循环中跑 Agent（供 FastAPI 线程调用）。
 
     转人工三路汇合（Router/Critic/用户主动）后自动调 Java 工单服务建单；
@@ -192,11 +207,11 @@ def run_agent_sync(user_text: str, history: list = None, session_id: str = "") -
     from .tools import MCPToolRegistry
 
     async def _main() -> AgentResult:
-        async with MCPToolRegistry() as registry:
+        async with MCPToolRegistry(actor_id=actor_id) as registry:
             if OpenAIChatLLM.available():
-                agent = ReActAgent(registry)
+                agent = ReActAgent(registry, context_note=context_note)
                 return await agent.run(user_text, history=history)
-            orchestrator = MultiAgentOrchestrator(registry)
+            orchestrator = MultiAgentOrchestrator(registry, context_note=context_note)
             return await orchestrator.run(user_text, history=history)
 
     result = asyncio.run(_main())

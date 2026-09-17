@@ -30,10 +30,23 @@ flowchart TB
 ```
 
 - Agent 层手写编排器：统一任务协议 `role / task / result`，全链路留痕可回放；内置 5 步上限、15s 工具超时、错误回喂、解析失败降级规则引擎。
-- 工具层走 MCP 标准协议（7 个工具：订单/物流/退款/知识库等），与 Function Calling 方案做过对照。
+- 工具层走 MCP 标准协议（6 个工具：订单查询 / 手机号查单 / 物流 / 退款资格 / 退款流程 / 知识库），与 Function Calling 方案做过对照。
+- **行级权限**：工具入参里的身份由服务端注入（模型传入的 `actor_id` 一律被覆盖），MCP server 按订单归属校验，跨用户访问返回 **403**；会话与身份绑定（`session_id → user_id`）。
+- **三层记忆**：工作记忆（最近 20 条，内存 + 文件 + Redis 镜像）、摘要记忆（工作记忆超 12 条时把较老消息压成摘要，避免窗口截断丢上下文）、长期偏好（用户级 `profiles.json`，跨会话保留）。
 - Java 侧负责企业后端的确定性部分：表驱动状态机、非法跳转 409、`@Transactional` 原子留痕、SLA 超时自动升级。
 
 ## 快速开始（5 条命令）
+
+> 权限与记忆的实测入口（服务起来后可直接验证）：
+> ```powershell
+> # 归属人问自己的订单 → 200
+> curl.exe -s -X POST http://127.0.0.1:8000/api/chat -H "Content-Type: application/json" -d "{\"message\":\"我的订单到哪了\",\"session_id\":\"s1\",\"user_id\":\"u-1001\"}"
+> # 换一个不是订单归属人的身份问同一句 → 403（行级权限）
+> curl.exe -s -X POST http://127.0.0.1:8000/api/chat -H "Content-Type: application/json" -d "{\"message\":\"我的订单到哪了\",\"session_id\":\"s2\",\"user_id\":\"u-2002\"}"
+> # 三层记忆视图 + 写用户长期偏好
+> curl.exe -s http://127.0.0.1:8000/api/sessions/s1/context
+> curl.exe -s -X POST http://127.0.0.1:8000/api/profile/u-1001 -H "Content-Type: application/json" -d "{\"回访偏好\":\"不要电话回访\"}"
+> ```
 
 前置：Python 3.11+（无需 Docker、无需 Java 即可跑通对话与评测，按需再补 Java 服务）。
 

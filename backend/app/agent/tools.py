@@ -7,7 +7,10 @@ from pathlib import Path
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
+from .errors import PermissionDenied  # noqa: F401  （对外统一从 tools 暴露）
+
 MCP_DIR = Path(__file__).resolve().parents[3] / "mcp_servers"
+
 
 SERVERS = {
     "order-server": MCP_DIR / "order_server.py",
@@ -24,6 +27,10 @@ class MCPToolRegistry:
     “Attempted to exit cancel scope in a different task”，因此采用
     一次一个会话的生命周期（与 test_client.py 已验证的模式一致）。
     """
+
+    def __init__(self, actor_id: str = ""):
+        # 身份由服务端持有：调用工具时注入，并覆盖模型传入的 actor_id
+        self.actor_id = actor_id or ""
 
     TOOL_SERVER = {
         "query_order": "order-server",
@@ -43,18 +50,34 @@ class MCPToolRegistry:
     def tool_names(self) -> list:
         return sorted(self.TOOL_SERVER)
 
+    def build_payload(self, args: dict) -> dict:
+        """组装工具入参：服务端身份覆盖模型传入的 actor_id（行级权限的关键）。"""
+        payload = dict(args or {})
+        if self.actor_id:
+            payload["actor_id"] = self.actor_id
+        return payload
+
     async def call(self, tool_name: str, args: dict):
         server = self.TOOL_SERVER.get(tool_name)
         if not server:
             raise KeyError(f"未知工具：{tool_name}")
+        payload = self.build_payload(args)
         path = SERVERS[server]
         params = StdioServerParameters(command=sys.executable, args=[str(path)])
         async with stdio_client(params) as (read, write):
             async with ClientSession(read, write) as session:
                 await session.initialize()
-                result = await session.call_tool(tool_name, args or {})
+                result = await session.call_tool(tool_name, payload)
         text = "".join(c.text for c in result.content if getattr(c, "type", "") == "text")
         try:
-            return json.loads(text)
+            parsed = json.loads(text)
         except Exception:
             return {"raw": text}
+        return raise_if_forbidden(parsed)
+
+
+def raise_if_forbidden(parsed):
+    """工具返回 403 时抛 PermissionDenied（由 API 层映射成 HTTP 403）。"""
+    if isinstance(parsed, dict) and parsed.get("code") == 403:
+        raise PermissionDenied(parsed.get("detail") or "无权访问该资源")
+    return parsed

@@ -23,3 +23,6 @@ PG_DSN = os.getenv("PG_DSN", "postgresql://postgres:postgres@localhost:5432/agen
 
 # Java 工单服务（起：转人工/投诉 → 自动建单闭环）
 TICKET_SERVICE_URL = os.getenv("TICKET_SERVICE_URL", "http://127.0.0.1:8080")
+
+# 演示用身份：会话未指定 user_id 时使用（对应 mock_data 里 ORD-20260828001/002 的归属人）
+DEMO_USER_ID = os.getenv("DEMO_USER_ID", "u-1001")

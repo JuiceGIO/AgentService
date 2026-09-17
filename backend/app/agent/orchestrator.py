@@ -4,6 +4,7 @@ import asyncio
 import logging
 
 from .llm import DEFAULT_ORDER, _compose_answer
+from .errors import PermissionDenied
 from .react import AgentResult
 from .router import Router
 
@@ -44,10 +45,12 @@ class Planner:
 class MultiAgentOrchestrator:
     """编排入口：路由 → 拆解 → 分层执行（并行/串行）→ 汇总回答。"""
 
-    def __init__(self, registry, router: Router = None, planner: Planner = None):
+    def __init__(self, registry, router: Router = None, planner: Planner = None, context_note: str = ""):
         self.registry = registry
         self.router = router or Router()
         self.planner = planner or Planner()
+        # 三层记忆注入点（会话摘要 + 用户偏好）：规则路径下随留痕一起记录，便于回放
+        self.context_note = context_note or ""
 
     async def run(self, user_text: str, history: list = None):
         intent, confidence, needs_escalation = await self.router.route(user_text)
@@ -92,6 +95,8 @@ class MultiAgentOrchestrator:
             }
             for t in tasks
         ]
+        if self.context_note:
+            messages.append({"role": "context", "note": self.context_note})
         results = await self._execute(tasks, messages)
         steps = [{"tool": t.tool, "args": t.args, "result": results.get(t.task_id)} for t in tasks]
         reply = self._compose(intent, tasks, results)
@@ -121,6 +126,9 @@ class MultiAgentOrchestrator:
                 except asyncio.TimeoutError:
                     result = {"error": f"工具 {t.tool} 调用超时"}
                     logger.warning("任务超时: %s", t.task_id)
+                except PermissionDenied:
+                    # 越权必须冒泡成 403，不能降级成"工具错误"被当成正常回答
+                    raise
                 except Exception as exc:
                     result = {"error": str(exc)}
                     logger.warning("任务失败: %s -> %s", t.task_id, exc)

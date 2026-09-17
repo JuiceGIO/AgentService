@@ -14,6 +14,7 @@ ORDERS = [
     {
         "order_id": "ORD-20260828001",
         "phone": "13800001234",
+        "owner_user_id": "u-1001",
         "status": "运输中",
         "status_code": "shipping",
         "created_at": "2026-08-28 10:12:00",
@@ -24,6 +25,7 @@ ORDERS = [
     {
         "order_id": "ORD-20260829002",
         "phone": "13800001234",
+        "owner_user_id": "u-1001",
         "status": "已签收",
         "status_code": "delivered",
         "created_at": "2026-08-29 15:30:00",
@@ -34,6 +36,7 @@ ORDERS = [
     {
         "order_id": "ORD-20260831003",
         "phone": "13800005678",
+        "owner_user_id": "u-2002",
         "status": "待发货",
         "status_code": "pending_shipment",
         "created_at": "2026-08-31 09:05:00",
@@ -42,6 +45,16 @@ ORDERS = [
         "address": "北京市朝阳区xx街2号（已脱敏）",
     },
 ]
+
+# 演示用默认身份：ORD-20260828001 / ORD-20260829002 归属 u-1001，ORD-20260831003 归属 u-2002。
+# 行级权限校验放在 MCP server 内部（工具它自己持有数据），身份由客户端在调用时注入且覆盖模型传入值。
+DEFAULT_USER_ID = "u-1001"
+
+
+def order_owner(order_id: str) -> str:
+    """返回订单归属人；订单不存在时返回空串。"""
+    target = (order_id or "").strip().upper()
+    return next((o.get("owner_user_id", "") for o in ORDERS if o["order_id"].upper() == target), "")
 
 LOGISTICS = {
     "ORD-20260828001": {

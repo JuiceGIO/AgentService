@@ -4,7 +4,7 @@ from datetime import date
 
 from mcp.server.fastmcp import FastMCP
 
-from mock_data import ORDERS, REFUND_RULES, TODAY
+from mock_data import ORDERS, REFUND_RULES, TODAY, order_owner
 
 mcp = FastMCP("refund-server")
 
@@ -27,8 +27,20 @@ def _find_order(order_id: str):
 
 
 @mcp.tool()
-def check_refund_eligibility(order_id: str) -> dict:
-    """判断订单是否支持退款/退货/换货：根据订单状态、签收天数和是否质量问题，给出结论与运费承担规则。"""
+def check_refund_eligibility(order_id: str, actor_id: str = "") -> dict:
+    """判断订单是否支持退款/退货/换货：根据订单状态、签收天数和是否质量问题，给出结论与运费承担规则。
+
+    actor_id 由服务端注入用于行级权限校验，业务调用无需传。
+    """
+    order_id = order_id.strip().upper()
+    owner = order_owner(order_id)
+    if owner and actor_id and owner != actor_id:
+        return {
+            "error": "forbidden",
+            "code": 403,
+            "order_id": order_id,
+            "detail": "该订单不属于当前用户，已拒绝访问（行级权限）",
+        }
     order = _find_order(order_id)
     if not order:
         return {"found": False, "message": f"未找到订单 {order_id}，请核对订单号。"}

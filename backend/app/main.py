@@ -6,12 +6,13 @@ import time
 import uuid
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from .config import APP_NAME
+from .config import APP_NAME, DEMO_USER_ID
+from .agent.errors import PermissionDenied
 from .agent.react import run_agent_sync
 from .delayed_queue import get_delayed_queue
 from .jobs import DELAYED_TYPES, TASK_TYPES
@@ -36,6 +37,7 @@ class EchoRequest(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     session_id: str = ""
+    user_id: str = ""  # 会话身份（行级权限用）；缺省用演示身份
 
 
 class TaskRequest(BaseModel):
@@ -109,11 +111,25 @@ async def echo(payload: EchoRequest):
 
 @app.post("/api/chat")
 async def chat(payload: ChatRequest):
-    """单 Agent ReAct 循环，通过 MCP 调用业务工具后回复（在线程的独立事件循环中执行）。"""
+    """单 Agent ReAct 循环，通过 MCP 调用业务工具后回复（在线程的独立事件循环中执行）。
+
+    会话身份（user_id）决定工具能访问哪些订单/工单：越权访问返回 403。
+    """
     text = payload.message.strip()
     if not text:
         return {"reply": "请输入您的问题。", "steps": [], "mode": "rule", "escalated": False}
-    return await asyncio.to_thread(run_agent_sync, text, None, payload.session_id)
+    store = get_session_store()
+    user_id = payload.user_id or store.get_user(payload.session_id) or DEMO_USER_ID
+    await store.set_user(payload.session_id, user_id)
+    context = await store.build_context(payload.session_id)
+    context_note = store.build_context_note(context)
+    return await asyncio.to_thread(run_agent_sync, text, None, payload.session_id, user_id, context_note)
+
+
+@app.exception_handler(PermissionDenied)
+async def permission_denied_handler(request: Request, exc: PermissionDenied):
+    """工具越权（行级权限）统一映射为 403，不返回资源是否存在。"""
+    return JSONResponse(status_code=403, content={"detail": str(exc) or "无权访问该资源"})
 
 
 @app.get("/api/sessions")
@@ -138,6 +154,24 @@ async def get_session_trace(session_id: str):
     store = get_session_store()
     trace = await store.get_trace(session_id)
     return {"session_id": session_id, "trace": trace}
+
+
+@app.get("/api/sessions/{session_id}/context")
+async def get_session_context(session_id: str):
+    """三层记忆视图：工作记忆（最近消息）+ 摘要记忆 + 用户长期偏好。"""
+    store = get_session_store()
+    context = await store.build_context(session_id)
+    return {"session_id": session_id, **context}
+
+
+@app.post("/api/profile/{user_id}")
+async def set_user_profile(user_id: str, payload: dict):
+    """写用户长期偏好（用户级，跨会话保留）。"""
+    store = get_session_store()
+    profile = store.get_profile(user_id)
+    for key, value in (payload or {}).items():
+        profile = await store.set_profile(user_id, key, value)
+    return {"user_id": user_id, "profile": profile}
 
 
 @app.get("/api/tickets")
@@ -211,9 +245,11 @@ async def ws_chat(websocket: WebSocket):
     await websocket.accept()
     store = get_session_store()
     session_id = websocket.query_params.get("session_id") or ""
+    user_id = websocket.query_params.get("user_id") or DEMO_USER_ID
     if not session_id:
         session_id = uuid.uuid4().hex
         await websocket.send_json({"type": "session", "session_id": session_id})
+    await store.set_user(session_id, user_id)
     history = await store.get_history(session_id)
     # 重连时下发历史，让页面恢复上次对话气泡（刷新不丢）
     await websocket.send_json({"type": "history", "messages": history})
@@ -234,7 +270,11 @@ async def ws_chat(websocket: WebSocket):
             text = (data.get("message") or "").strip()
             if not text:
                 continue
-            result = await asyncio.to_thread(run_agent_sync, text, list(history), session_id)
+            context = await store.build_context(session_id)
+            context_note = store.build_context_note(context)
+            result = await asyncio.to_thread(
+                run_agent_sync, text, list(history), session_id, user_id, context_note
+            )
             history.append({"role": "user", "content": text})
             history.append({"role": "assistant", "content": result["reply"]})
             await store.append(session_id, "user", text)
