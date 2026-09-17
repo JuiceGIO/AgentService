@@ -30,7 +30,7 @@
 # 起服务（Python Agent 层 :8000）
 cd backend; .\.venv\Scripts\python -m uvicorn app.main:app --port 8000
 
-# 单元测试（44 例，零依赖、不联网、不需要 Key）
+# 单元测试（54 例，零依赖、不联网、不需要 Key）
 backend\.venv\Scripts\python.exe -m unittest discover -s tests
 
 # 评测基线（golden 200 条，规则引擎口径）
