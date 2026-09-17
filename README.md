@@ -107,7 +107,7 @@ docker compose -p agentservice up -d --build
 **全流程验收与质量门禁**
 
 - `scripts/acceptance_12.py`：12 项端到端验收（健康检查/对话查物流/投诉自动建单/合法流转/非法 409/SLA 超时升级/异步与延迟任务/评测基线）实测 12/12 通过。
-- `tests/`：44 个单元测试，全部零依赖、不联网、不需要 API Key。
+- `tests/`：54 个单元测试，全部零依赖、不联网、不需要 API Key。
 - `.github/workflows/ci.yml`：push/PR 自动跑「单测 + 评测基线 + 安全审计」与「Java 构建 + compose 构建」两个 job。
 
 ## 踩坑记录（现象 → 根因 → 修复）
